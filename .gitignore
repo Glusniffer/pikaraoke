@@ -6,3 +6,5 @@ __pycache__/
 songs/
 qrcode.png
 .DS_Store
+start_ext.bat
+start.bat
