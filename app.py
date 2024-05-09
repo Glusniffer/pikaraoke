@@ -17,13 +17,6 @@ from flask import (Flask, flash, make_response, redirect, render_template,
                    request, send_file, url_for)
 from flask_babel import Babel
 from flask_paginate import Pagination, get_page_parameter
-from selenium import webdriver
-from selenium.webdriver.chrome.options import Options
-from selenium.webdriver.chrome.service import Service
-from selenium.webdriver.common.by import By
-from selenium.webdriver.common.keys import Keys
-from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver.support.ui import WebDriverWait
 
 import karaoke
 from constants import LANGUAGES, VERSION
@@ -738,13 +731,6 @@ if __name__ == "__main__":
         required=False,
     )
     parser.add_argument(
-        "--hide-splash-screen",
-        "--headless",
-        action="store_true",
-        help="Headless mode. Don't launch the splash screen/player on the pikaraoke server",
-        required=False,
-    )
-    parser.add_argument(
         "--high-quality",
         action="store_true",
         help="Download higher quality video. Note: requires ffmpeg and may cause CPU, download speed, and other performance issues",
@@ -824,7 +810,6 @@ if __name__ == "__main__":
         volume=parsed_volume,
         hide_url=args.hide_url,
         hide_raspiwifi_instructions=args.hide_raspiwifi_instructions,
-        hide_splash_screen=args.hide_splash_screen,
         high_quality=args.high_quality,
         logo_path=arg_path_parse(args.logo_path),
         hide_overlay=args.hide_overlay,
@@ -847,36 +832,7 @@ if __name__ == "__main__":
         }
     )
     cherrypy.engine.start()
-
-    # Start the splash screen using selenium
-    if not args.hide_splash_screen: 
-        if platform == "raspberry_pi":
-            service = Service(executable_path='/usr/bin/chromedriver')
-        else: 
-            service = None
-        options = Options()
-
-        if args.window_size:
-            options.add_argument("--window-size=%s" % (args.window_size))
-            options.add_argument("--window-position=0,0")
-            
-        options.add_argument("--kiosk")
-        options.add_argument("--start-maximized")
-        options.add_experimental_option("excludeSwitches", ['enable-automation'])
-        driver = webdriver.Chrome(service=service, options=options)
-        driver.get(f"{k.url}/splash" )
-        driver.add_cookie({'name': 'user', 'value': 'PiKaraoke-Host'})
-        # Clicking this counts as an interaction, which will allow the browser to autoplay audio
-        wait = WebDriverWait(driver, 60)
-        elem = wait.until(EC.element_to_be_clickable((By.ID, "permissions-button")))
-        elem.click()
-
-    # Start the karaoke process
     k.run()
 
-    # Close running processes when done
-    if not args.hide_splash_screen:
-        driver.close()
     cherrypy.engine.exit()
-
     sys.exit()

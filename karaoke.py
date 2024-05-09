@@ -65,7 +65,6 @@ class Karaoke:
         download_path="/usr/lib/pikaraoke/songs",
         hide_url=False,
         hide_raspiwifi_instructions=False,
-        hide_splash_screen=False,
         high_quality=False,
         volume=0.85,
         log_level=logging.DEBUG,
@@ -84,7 +83,6 @@ class Karaoke:
         self.ffmpeg_port = ffmpeg_port
         self.hide_url = hide_url
         self.hide_raspiwifi_instructions = hide_raspiwifi_instructions
-        self.hide_splash_screen = hide_splash_screen
         self.download_path = download_path
         self.high_quality = high_quality
         self.splash_delay = int(splash_delay)
@@ -114,7 +112,6 @@ class Karaoke:
     prefer hostname: {self.prefer_hostname}
     url override: {self.url_override}
     hide RaspiWiFi instructions: {self.hide_raspiwifi_instructions}
-    headless (hide splash): {self.hide_splash_screen}
     splash_delay: {self.splash_delay}
     screensaver_timeout: {self.screensaver_timeout}
     high quality video: {self.high_quality}
